@@ -1,11 +1,15 @@
+import ReactDom from "react-dom";
+import React from "react";
 import "./styles.css";
+import App from "./App";
 
-document.getElementById("app").innerHTML = `
-<h1>Hello Vanilla!</h1>
-<div>
-  We use the same configuration as Parcel to bundle this sandbox, you can find more
-  info about Parcel 
-  <a href="https://parceljs.org" target="_blank" rel="noopener noreferrer">here</a>.
-</div>
-`;
-<App />;
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
+ReactDom.render(
+  <React.StrictMode>
+    <Router>
+      <Route path="/" component={App} />
+    </Router>
+  </React.StrictMode>,
+  document.getElementById("app")
+);

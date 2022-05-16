@@ -7,3 +7,5 @@ export const NewPost = () => {
     </main>
   );
 };
+
+export default NewPost;

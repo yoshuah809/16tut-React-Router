@@ -1,7 +1,8 @@
-import React from "react";
 import Post from "./Post";
+import React from "react";
 
 const Feed = ({ posts }) => {
+  //const { posts } = useContext(DataContext);
   return (
     <>
       {posts.map(post => (

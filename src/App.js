@@ -11,8 +11,7 @@ import { Layout } from "./components/Layout";
 import { format } from "date-fns";
 import api from "./api/posts";
 import EditPost from "./components/EditPost";
-
-
+import useAxiosFetch from "./hooks/useAxiosFetch";
 
 export default function App() {
   const [posts, setPosts] = useState([]);
@@ -23,6 +22,13 @@ export default function App() {
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
   const navigate = useNavigate();
+  const { data, fetchError, isLoading } = useAxiosFetch(
+    "http://localhost:3500/posts"
+  );
+
+  useEffect(() => {
+    setPosts(data);
+  }, [data]);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -41,24 +47,6 @@ export default function App() {
       console.log(`Error: ${err.message}`);
     }
   };
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await api.get("/posts");
-        setPosts(response.data);
-      } catch (error) {
-        if (error.response) {
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-        } else {
-          console.log(`Error: ${error.message}`);
-        }
-      }
-    };
-    fetchPosts();
-  }, []);
 
   useEffect(() => {
     const filteredResults = posts.filter(
@@ -101,7 +89,16 @@ export default function App() {
         path="/"
         element={<Layout search={search} setSearch={setSearch} />}
       >
-        <Route index element={<Home posts={searchResults} />} />
+        <Route
+          index
+          element={
+            <Home
+              fetchError={fetchError}
+              isLoading={isLoading}
+              posts={searchResults}
+            />
+          }
+        />
         <Route path="post">
           <Route
             index

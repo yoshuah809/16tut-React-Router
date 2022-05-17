@@ -5,7 +5,7 @@ import DataContext from "../context/DataContext";
 
 const Nav = () => {
   const { search, setSearch } = useContext(DataContext);
-  //const { navigate } = useNavigate();
+
   return (
     <nav className="Nav">
       <form className="searchForm" onSubmit={e => e.preventDefault()}>

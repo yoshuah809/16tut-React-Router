@@ -12,6 +12,8 @@ import { format } from "date-fns";
 import api from "./api/posts";
 import EditPost from "./components/EditPost";
 
+
+
 export default function App() {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
@@ -113,9 +115,15 @@ export default function App() {
               />
             }
           />
-        </Route>
-        <Route path="/edit/:id">
+
           <Route
+            path=":id"
+            element={<PostPage posts={posts} handleDelete={handleDelete} />}
+          />
+        </Route>
+        <Route path="edit/:id">
+          <Route
+            index
             element={
               <EditPost
                 posts={posts}
@@ -128,10 +136,7 @@ export default function App() {
             }
           />
         </Route>
-        <Route
-          path="/post/:id"
-          element={<PostPage posts={posts} handleDelete={handleDelete} />}
-        />
+
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Missing />} />
       </Route>

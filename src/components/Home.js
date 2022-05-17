@@ -3,13 +3,13 @@ import Feed from "./Feed";
 
 export const Home = ({ posts }) => {
   return (
-    <home className="Home">
+    <main className="Home">
       {posts.length ? (
         <Feed posts={posts} />
       ) : (
         <p style={{ marginTop: "2rem" }}>No post to Display</p>
       )}
-    </home>
+    </main>
   );
 };
 

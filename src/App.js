@@ -1,5 +1,4 @@
-import { BrowserRouter, Route, Routes, useNavigation } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 
 import Header from "./components/Header";
 import Nav from "./components/Nav";
@@ -9,6 +8,9 @@ import About from "./components/About";
 import Missing from "./components/Missing";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
+import { useState, useEffect } from "react";
+import { Layout } from "./components/Layout";
+import { format } from "date-fns";
 
 export default function App() {
   const [posts, setPosts] = useState([
@@ -39,24 +41,64 @@ export default function App() {
   ]);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const handleDelete = id => {};
+  const [postTitle, setPostTitle] = useState("");
+  const [postBody, setPostBody] = useState("");
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
+    const datetime = format(new Date(), "MMMM dd, yyyy pp");
+    const newPost = { id, title: postTitle, datetime, body: postBody };
+    const allPosts = [...posts, newPost];
+    setPosts(allPosts);
+    setPostTitle("");
+    setPostBody("");
+    navigate("/");
+  };
+
+  useEffect(() => {
+    const filteredResults = posts.filter(
+      post =>
+        post.body.toLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
+    );
+    setSearchResults(filteredResults.reverse());
+  }, [posts, search]);
+
+  let navigate = useNavigate();
+  const handleDelete = id => {
+    const postsList = posts.filter(post => post.id !== id);
+    setPosts(postsList);
+    navigate("/");
+  };
   return (
-    <div className="App">
-      <Header title="React Js Blog" />
-      <BrowserRouter>
-        <Nav search={search} setSearch={setSearch} />
-        <Routes>
-          <Route index="/" element={<Home posts={posts} />} />
-          <Route path="/post" element={<NewPost />} />
+    <Routes>
+      <Route
+        path="/"
+        element={<Layout search={search} setSearch={setSearch} />}
+      >
+        <Route index element={<Home posts={searchResults} />} />
+        <Route path="post">
           <Route
-            path="/post/:id"
-            element={<PostPage posts={posts} handleDelete={handleDelete} />}
+            index
+            element={
+              <NewPost
+                handleSubmit={handleSubmit}
+                postTitle={postTitle}
+                setPostTitle={setPostTitle}
+                postBody={postBody}
+                setPostBody={setPostBody}
+              />
+            }
           />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<Missing />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
-    </div>
+        </Route>
+        <Route
+          path="/post/:id"
+          element={<PostPage posts={posts} handleDelete={handleDelete} />}
+        />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<Missing />} />
+      </Route>
+    </Routes>
   );
 }
